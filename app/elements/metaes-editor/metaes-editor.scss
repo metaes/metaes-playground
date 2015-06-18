@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  height: 500px;
+}
+
+.code-mirror {
+  width: 100%;
+  display: block;
+}
+
+.error {
+  color: red;
+  font-family: courier, monospace;
+  font-size: 12px;
+  float: right;
+}
+
+#tooltip {
+  position: absolute;
+  z-index: 1000;
+}

@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="metaes-tooltip" attributes="value, type">
+  <template>
+    <link rel="stylesheet" href="metaes-tooltip.css">
+    <strong>{{addColon(type)}} </strong>{{toSourceSafe(value)}}
+  </template>
+  <script>
+    (function () {
+      Polymer({
+
+        addColon: function (value) {
+          return value + ": ";
+        },
+        toSourceSafe: function (object) {
+          try {
+            return this.toSource(object);
+          } catch (e) {
+            return '';
+          }
+        },
+        // define element prototype here
+        toSource: function toSource(object) {
+          function getArgs(fn) {
+            if (fn.length === 0) {
+              return [];
+            }
+            try {
+              var args = /\(\s*([^)]+?)\s*\)/.exec(fn.toString());
+              if (args[1]) {
+                args = args[1].split(/\s*,\s*/);
+              }
+              return args;
+            } catch (e) {
+              return [];
+            }
+          }
+
+          function printArray(array) {
+            var max = 5;
+            var dots = array.length > max ? ", ..." : "";
+            return '[' + array.slice(0, max).join(", ") + dots + ']';
+          }
+
+          if (Array.isArray(object)) {
+            return printArray(object);
+          }
+
+          switch (typeof object) {
+            case 'string':
+              return JSON.stringify(object);
+            case 'boolean':
+            case 'number':
+              return '' + object;
+            case 'function':
+              return 'function ' + object.name + "(" + getArgs(object).join(", ") + ") {...}";
+            case 'undefined':
+              return '' + object;
+            case "object":
+              if (object === null) {
+                return 'null';
+              }
+              var str = object.toString();
+              if (str === '[object Arguments]') {
+                return toSource(object[0]);
+              } else {
+                return str + ", keys: " + printArray(Object.keys(object));
+              }
+          }
+
+        }
+      });
+    })();
+  </script>
+</polymer-element>

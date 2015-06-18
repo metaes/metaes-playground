@@ -1,0 +1,150 @@
+@import "../bower_components/bootstrap/dist/css/bootstrap.css";
+
+body {
+  background: #fafafa;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+  padding: 0 0px;
+  margin: 0px;
+}
+
+/* fix for browsers other than Chrome */
+.markedText {
+  background: rgba(213, 230, 255, .5);
+}
+
+.evaluatedCode {
+  background: rgba(2, 255, 1, 0.09);
+}
+
+body /deep/ {
+
+  .bestNode {
+    background-color: #f2f2f2;
+    border-bottom: 1px dashed #69B4FF;
+    opacity: 1;
+  }
+
+  .markedText {
+    background: rgba(213, 230, 255, .5);
+  }
+
+  .disabledCode {
+    opacity: .3;
+  }
+
+  .editedCode {
+    border-top: 1px solid rgba(213, 230, 255, .8);
+    border-bottom: 1px solid rgba(213, 230, 255, .8);
+  }
+
+  .evaluatedCode {
+    background: rgba(2, 255, 1, 0.09);
+  }
+
+  .sameReference {
+    background: #D5E6FF;
+  }
+
+  .tooltip {
+    position: absolute;
+    width: 300px;
+    height: 180px;
+    z-index: 1000;
+    opacity: .8;
+    padding: 5px;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+  }
+
+  .arrow {
+    position: absolute;
+    left: 0;
+    font-size: smaller;
+    top: 2px;
+    color: #6E6E6E;
+    opacity: .6;
+  }
+
+  .arrow:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  .meta-value {
+    color: #ccc;
+    padding-left: 10px;
+    text-overflow: clip;
+  }
+
+  .meta-value > div {
+    min-height: 15px;
+    padding: 0px;
+    margin: 0px;
+    font-family: monospace;
+    overflow: hidden;
+  }
+
+  .single-value {
+    background-color: white;
+    padding: 0px 5px;
+    border-radius: 2px;
+    font-size: smaller;
+
+    text-overflow: ellipsis;
+    display: inline-block;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0);
+    opacity: .7;
+    margin: 0px;
+  }
+
+  .single-value-number {
+    color: #69B4FF;
+  }
+
+  .single-value-string {
+    color: #B74944;
+  }
+
+  .single-value-object, .single-value-function {
+    color: #303942;
+  }
+
+  .single-value-function {
+    font-style: italic;
+  }
+
+  .single-value::after {
+    content: ", ";
+    color: #000000;
+  }
+
+  .single-value:hover {
+    background-color: #f2f2f2;
+    border-bottom: 1px dashed #69B4FF;
+    cursor: pointer;
+    opacity: 1;
+  }
+
+}
+
+.main-footer {
+  margin-top: 20px;
+  text-align: center;
+  display: block;
+  width: 100%;
+  border-top: 1px solid rgb(234, 234, 234);
+  padding-top: 5px;
+  color: grey;
+}
+
+.group-border {
+  margin: 0px;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+#output {
+  width: 100%;
+  font-family: "Consolas", "Menlo", "Courier", monospace;
+}

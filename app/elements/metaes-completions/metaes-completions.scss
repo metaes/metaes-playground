@@ -1,0 +1,82 @@
+:host {
+  display: block;
+  z-index: 2000;
+
+  .dropdown-component {
+    position: absolute;
+    max-width: 600px;
+    overflow-y: auto;
+    border: 1px solid rgb(234, 234, 234);
+    max-height: 200px;
+    font-size: 12px;
+    z-index: 1000;
+    background-color: white;
+  }
+
+  .dropdownmodal {
+    overflow-x: hidden;
+
+    float: left;
+  }
+
+  .dropdown {
+    font-family: courier, monospace;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-collapse: collapse;
+  }
+
+  .dropdown tr {
+    cursor: pointer;
+  }
+
+  .dropdown tr.selected {
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+  }
+
+  .dropdown tr td {
+    padding: 3px;
+    border: none;
+  }
+
+  .dropdown tr td:not(:last-child) {
+    padding-right: 10px;
+  }
+
+  .dropdown tr td:first-child {
+    text-align: right;
+    font-size: smaller;
+    padding-left: 10px;
+  }
+
+  .dropdown tr.selected td {
+    background: #268bd2;
+    color: white;
+  }
+
+  .dropdown tr:hover td {
+    background: #69B4FF;
+    color: white;
+  }
+
+  .CodeMirror-lines {
+    line-height: 15px;
+  }
+
+  .editorComponent {
+    position: relative;
+  }
+
+  .type-value {
+    color: #69B4FF;
+    font-style: italic;
+  }
+
+  .foundSubstring {
+    border-bottom: 1px dotted black;
+    font-weight: bold;
+  }
+
+}
+

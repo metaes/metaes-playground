@@ -1,0 +1,17 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="metaes-editor" attributes="height">
+  <template>
+    <link rel="stylesheet" href="metaes-editor.css">
+    <div style="border:1px solid #eee; position: relative">
+      <code-mirror id="editor" class="code-mirror"></code-mirror>
+      <metaes-completions id="completionsComponent" style="display:none;position: absolute"></metaes-completions>
+    </div>
+    <metaes-tooltip id="tooltip"></metaes-tooltip>
+    <div id="error" class="error"></div>
+
+  </template>
+  <script>
+    Polymer(Editor.MetaesEditor.prototype);
+  </script>
+</polymer-element>

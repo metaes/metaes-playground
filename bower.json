@@ -1,0 +1,13 @@
+{
+  "name": "MetaES Playground",
+  "version": "0.1.0",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.4.0",
+    "code-mirror": "Polymer/code-mirror#~0.4.0",
+    "metaes": "git@github.com:metaes/metaes.git#master",
+    "bootstrap": "~3.3.4"
+  },
+  "devDependencies": {
+    "polymer-test-tools": "Polymer/polymer-test-tools#^0.4.0"
+  }
+}
