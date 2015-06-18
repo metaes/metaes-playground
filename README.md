@@ -10,38 +10,38 @@ Currently recommended browser is Google Chrome.
 # Features
 
 Although MetaES Playground is currently in early alpha state, it has a number of features:
-   * On change evaluation - the code is re-evaluated everytime is changed 
-   * Error notification - red text below the editor. It can be both syntax error (static) or error from JavaScript execution (dynamic).
+   * On change evaluation - the code is re-evaluated everytime is changed
+   * Code completion of variables and members. Press `ctrl+space` to see completions of variables. Press `.` after any `Identifier` to see its members. Highly experimental.
    
-   <img src="http://metaes.org/docs-assets/error.png" alt="Drawing" style="width: 500px;"/>
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/completion.gif?token=AMG8Xx0hRYSnUf-ef2YGtqn1PHEHH13tks5VjFHmwA%3D%3D" style="width: 700px;"/>
+    
+   * Error notification - red text below the editor. It can be both syntax error (static) or error from JavaScript execution (dynamic).
+    
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/error.png?token=AMG8X7KTFOlj60BGaeyWiedIonvHr1HKks5VjFFYwA%3D%3D" style="width: 500px;"/>
    
    * Highlighting of just evaluated code with light green
    
-   <img src="http://metaes.org/docs-assets/highlighting.gif" alt="Drawing" style="width: 300px;"/>
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/highlighting.gif?token=AMG8X5OfyavXSs9vbPCGO4ufx7d1Xf6qks5VjFFpwA%3D%3D" style="width: 300px;"/>
    
    * Variables list display - variables in currently evaluated scope and all parent scopes
    
-   <img src="http://metaes.org/docs-assets/variables.png" alt="Drawing" style="width: 500px;"/>
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/variables.png?token=AMG8X-5U7YxAUwIdR5Tv-A9SV135xa6vks5VjFF5wA%3D%3D" style="width: 500px;"/>
    
    * Callstack display - currently evaluated functions list
    
-   <img src="http://metaes.org/docs-assets/callstack.png" alt="Drawing" style="width: 500px;"/>
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/callstack.png?token=AMG8X9lP7H_tiJWb2E6NO79aUOnZfcF0ks5VjFAXwA%3D%3D" style="width: 500px;"/>
    
    * Display current token value below the editor, if evaluated before. Highlight token under the cursor in light blue.
    
-   <img src="http://metaes.org/docs-assets/values.png" alt="Drawing" style="width: 500px;"/>
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/values.png?token=AMG8X9F3kCGKNemAbG3OYNIgnlTF2tjUks5VjFGrwA%3D%3D" style="width: 500px;"/>
    
    * Output - mimic default `window.console.log`, but `log` everything to original `console` as well
    
-   <img src="http://metaes.org/docs-assets/output.png" alt="Drawing" style="width: 500px;"/>
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/output.png?token=AMG8Xw69DzEcfdgXp0Zo4mIAJqz2QzAfks5VjFHHwA%3D%3D" style="width: 500px;"/>
    
    * Canvas - small `div` element that for visual output
    
-   <img src="http://metaes.org/docs-assets/canvas.png" alt="Drawing" style="width: 500px;"/>
-   
-   * Code completion of variables and members. Press `ctrl+space` to see completions of variables. Press `.` after any `Identifier` to see its members. Highly experimental.
-   
-   <img src="http://metaes.org/docs-assets/completion.gif" alt="Drawing" style="width: 700px;"/>
+   <img src="https://raw.githubusercontent.com/metaes/metaes-playground/master/app/docs-assets/canvas.png?token=AMG8Xy_-HrrNOev7pv6eCtZPooTVIp7tks5VjFHVwA%3D%3D" style="width: 500px;"/>
    
    * `metaes.evaluate` patching - create special `metaes` object that intercepts call to original `metaes.evaluate`. It allows playground to see configuration for MetaES and hook its own interceptors. Slows down execution quite significantly.
 
