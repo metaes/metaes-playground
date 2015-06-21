@@ -54,15 +54,9 @@ function runApp() {
     var output = <HTMLTextAreaElement>document.querySelector('#output');
 
     var variables:MetaesCompletions.MetaesCompletionsElement = <any>document.querySelector('#variables');
-    variables.values = ObjectUtils.extractCompletions(localStorage);
     variables.shouldSort = false;
 
     var callstack:MetaesCompletions.MetaesCompletionsElement = <any>document.querySelector('#callstack');
-    callstack.values = ObjectUtils.extractCompletions(window).map(row => {
-      let {name, value} = row;
-      return {name, value};
-    });
-
     [variables, callstack].forEach(fixCss);
 
     var
