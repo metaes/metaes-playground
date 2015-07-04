@@ -1,5 +1,6 @@
 /// <reference path="../elements/metaes-editor/metaes-editor.ts" />
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./structural-completions.ts" />
 
 module EvaluationSystem2 {
 
@@ -54,8 +55,7 @@ module EvaluationSystem2 {
     (source:String, env:Env, cfg?:EvaluationConfig, success?:SuccessCallback, error?:ErrorCallback): any;
   }
 
-  declare
-  var metaes:{
+  declare var metaes:{
     evaluate: Evaluate;
     parse: (source:String) => ASTNode;
   };
@@ -161,6 +161,7 @@ module EvaluationSystem2 {
     private evaluator:Evaluator;
     private editorEventsBinder:EditorEventsBinder;
     private lastBestNode:ASTNode;
+    private lastGrammar:Object;
 
     constructor(editor:Editor.MetaesEditor) {
       this.editor = editor;
@@ -179,6 +180,26 @@ module EvaluationSystem2 {
 
     evaluate() {
       this.editorEventsBinder.executeChangeListener();
+    }
+
+    startIdleMode() {
+      this.editorEventsBinder.setListener({
+        changeListener: () => {
+        },
+        cursorActivityListener: () => {
+          this.highlightNodeUnderTheCursor();
+        },
+        keydownListener: (editor, event:KeyboardEvent) => {
+          switch (event.keyCode) {
+            case 32: // ctrl + space
+              if (event.ctrlKey) {
+                event.preventDefault();
+                this.startStructuralCompletion(this.lastGrammar);
+              }
+              return;
+          }
+        }
+      });
     }
 
     listenToWholeEditor() {
@@ -202,8 +223,7 @@ module EvaluationSystem2 {
               coords = this.editor.codeMirror.cursorCoords(this.editor.getCurrentCursorIndex(), 'local'),
               completionsComponent = this.editor.completionsComponent;
             this.startCompletionMode(extractor, offset);
-            completionsComponent.style.left = coords.left + 40 + 'px';
-            completionsComponent.style.top = coords.top + 20 + 'px';
+            this.editor.updateCompletionsPosition();
             completionsComponent.setFilterText(null);
             completionsComponent.setValues(extractor());
             completionsComponent.show();
@@ -225,6 +245,51 @@ module EvaluationSystem2 {
               }
               return;
           }
+        }
+      });
+    }
+
+    startStructuralCompletion(grammar) {
+      this.lastGrammar = grammar;
+
+      var start = this.editor.getCurrentCursorIndex(), stop;
+
+      // TODO: DRY
+      var onCompletionSelected = (e?) => {
+        this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
+        if (e && e.detail) {
+          var value = e.detail.completion;
+          var from = this.editor.posFromIndex(start), to = this.editor.posFromIndex(stop);
+          this.editor.codeMirror.getDoc().replaceRange(value, from, to);
+          this.editor.completionsComponent.hide();
+
+          // repeat forever
+          this.startIdleMode();
+        }
+      };
+      this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+
+      this.editorEventsBinder.setListener({
+        changeListener: () => {
+          var now = this.editor.getCurrentCursorIndex();
+          var filter = this.editor.getValue().substring(start, stop = now);
+          var completionsComponent = this.editor.completionsComponent;
+          completionsComponent.setFilterText(filter);
+          completionsComponent.setValues(StructuralCompletions.getHints(grammar, filter));
+          completionsComponent.show();
+          this.editor.updateCompletionsPosition();
+        },
+        cursorActivityListener: () => {
+          // TODO: DRY
+          var now = this.editor.getCurrentCursorIndex();
+          if (now < start || now > stop) {
+            onCompletionSelected();
+            this.editor.completionsComponent.hide();
+            return;
+          }
+        },
+        keydownListener: (editor, event:KeyboardEvent) => {
+          this.editor.completionsComponent.keyPressed(event);
         }
       });
     }

@@ -1,5 +1,6 @@
 /// <reference path="../elements/metaes-editor/metaes-editor.ts" />
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="./structural-completions.ts" />
 var EvaluationSystem2;
 (function (EvaluationSystem2) {
     var ASTNode = (function () {
@@ -103,6 +104,26 @@ var EvaluationSystem2;
         EditorEvaluator.prototype.evaluate = function () {
             this.editorEventsBinder.executeChangeListener();
         };
+        EditorEvaluator.prototype.startIdleMode = function () {
+            var _this = this;
+            this.editorEventsBinder.setListener({
+                changeListener: function () {
+                },
+                cursorActivityListener: function () {
+                    _this.highlightNodeUnderTheCursor();
+                },
+                keydownListener: function (editor, event) {
+                    switch (event.keyCode) {
+                        case 32:
+                            if (event.ctrlKey) {
+                                event.preventDefault();
+                                _this.startStructuralCompletion(_this.lastGrammar);
+                            }
+                            return;
+                    }
+                }
+            });
+        };
         EditorEvaluator.prototype.listenToWholeEditor = function () {
             var _this = this;
             this.editorEventsBinder.setListener({
@@ -124,8 +145,7 @@ var EvaluationSystem2;
                         if (offset === void 0) { offset = 0; }
                         var coords = _this.editor.codeMirror.cursorCoords(_this.editor.getCurrentCursorIndex(), 'local'), completionsComponent = _this.editor.completionsComponent;
                         _this.startCompletionMode(extractor, offset);
-                        completionsComponent.style.left = coords.left + 40 + 'px';
-                        completionsComponent.style.top = coords.top + 20 + 'px';
+                        _this.editor.updateCompletionsPosition();
                         completionsComponent.setFilterText(null);
                         completionsComponent.setValues(extractor());
                         completionsComponent.show();
@@ -145,6 +165,47 @@ var EvaluationSystem2;
                             }
                             return;
                     }
+                }
+            });
+        };
+        EditorEvaluator.prototype.startStructuralCompletion = function (grammar) {
+            var _this = this;
+            this.lastGrammar = grammar;
+            var start = this.editor.getCurrentCursorIndex(), stop;
+            // TODO: DRY
+            var onCompletionSelected = function (e) {
+                _this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
+                if (e && e.detail) {
+                    var value = e.detail.completion;
+                    var from = _this.editor.posFromIndex(start), to = _this.editor.posFromIndex(stop);
+                    _this.editor.codeMirror.getDoc().replaceRange(value, from, to);
+                    _this.editor.completionsComponent.hide();
+                    // repeat forever
+                    _this.startIdleMode();
+                }
+            };
+            this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+            this.editorEventsBinder.setListener({
+                changeListener: function () {
+                    var now = _this.editor.getCurrentCursorIndex();
+                    var filter = _this.editor.getValue().substring(start, stop = now);
+                    var completionsComponent = _this.editor.completionsComponent;
+                    completionsComponent.setFilterText(filter);
+                    completionsComponent.setValues(StructuralCompletions.getHints(grammar, filter));
+                    completionsComponent.show();
+                    _this.editor.updateCompletionsPosition();
+                },
+                cursorActivityListener: function () {
+                    // TODO: DRY
+                    var now = _this.editor.getCurrentCursorIndex();
+                    if (now < start || now > stop) {
+                        onCompletionSelected();
+                        _this.editor.completionsComponent.hide();
+                        return;
+                    }
+                },
+                keydownListener: function (editor, event) {
+                    _this.editor.completionsComponent.keyPressed(event);
                 }
             });
         };

@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>MetaES Playground</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild-->
+</head>
+<body>
+<!-- build:js scripts/app.pt.1.js -->
+<script src="bower_components/esprima/esprima.js"></script>
+<script>originalEsprima = esprima;</script>
+<!-- endbuild-->
+
+<!-- don't minify metaes because of uglifyjs errors-->
+<script src="bower_components/metaes/metaes.js"></script>
+
+<!-- build:js scripts/app.pt.2.js -->
+<script src="bower_components/platform/platform.js"></script>
+<script src="scripts/object-utils.js"></script>
+<script src="elements/metaes-completions/metaes-completions.js"></script>
+<script src="elements/metaes-editor/metaes-editor.js"></script>
+<script src="scripts/evaluation-system2.js"></script>
+<script src="scripts/structural-completions.js"></script>
+<script src="scripts/main-structural-completions.js"></script>
+<metaes-editor id="editor"></metaes-editor>
+<!-- endbuild-->
+<!-- build:vulcanized elements/elements.vulcanized.html -->
+<link rel="import" href="elements/elements.html">
+<!-- endbuild-->
+</body>
+
+</html>

@@ -1,0 +1,1018 @@
+{
+  "Program": {
+    "productions": {
+      "body": [
+        "ExpressionStatement",
+        "BlockStatement",
+        "VariableDeclaration",
+        "WhileStatement",
+        "IfStatement",
+        "SwitchStatement",
+        "FunctionDeclaration",
+        "EmptyStatement",
+        "DebuggerStatement",
+        "TryStatement",
+        "ForInStatement",
+        "ClassDeclaration",
+        "ImportDeclaration",
+        "ReturnStatement",
+        "LabeledStatement",
+        "ForStatement",
+        "DoWhileStatement",
+        "ThrowStatement",
+        "WithStatement"
+      ],
+      "errors": [
+        null
+      ]
+    },
+    "template": [
+      "{{body}}",
+      ""
+    ]
+  },
+  "ExpressionStatement": {
+    "productions": {
+      "expression": [
+        "CallExpression",
+        "Literal",
+        "AssignmentExpression",
+        "UpdateExpression",
+        "UnaryExpression",
+        "MemberExpression",
+        "Identifier",
+        "FunctionExpression",
+        "BinaryExpression",
+        "ObjectExpression",
+        "ArrowFunctionExpression",
+        "ClassExpression",
+        "ArrayExpression",
+        "YieldExpression",
+        "TemplateLiteral",
+        "NewExpression",
+        "TaggedTemplateExpression",
+        "LogicalExpression",
+        "ConditionalExpression",
+        "ThisExpression",
+        "SequenceExpression"
+      ]
+    },
+    "template": [
+      "({{expression}});",
+      "{{expression}};"
+    ]
+  },
+  "CallExpression": {
+    "productions": {
+      "callee": [
+        "FunctionExpression",
+        "Identifier",
+        "MemberExpression"
+      ],
+      "arguments": [
+        "ThisExpression",
+        "FunctionExpression",
+        "ArrayExpression",
+        "Identifier",
+        "AssignmentExpression",
+        "MemberExpression",
+        "CallExpression",
+        "BinaryExpression",
+        "Literal",
+        "UpdateExpression",
+        "LogicalExpression",
+        "ObjectExpression",
+        "ConditionalExpression",
+        "NewExpression",
+        "UnaryExpression",
+        "ArrowFunctionExpression"
+      ]
+    },
+    "template": [
+      "{{callee}}({{arguments}})",
+      "{{callee}}()"
+    ]
+  },
+  "FunctionExpression": {
+    "productions": {
+      "params": [
+        "Identifier"
+      ],
+      "defaults": [
+        "Literal"
+      ],
+      "body": [
+        "BlockStatement"
+      ],
+      "id": [
+        "Identifier"
+      ]
+    },
+    "template": [
+      "function ({{params}}) {{body}}",
+      "function () {{body}}",
+      "function {{id}}() {{body}}",
+      "() {{body}}",
+      "({{params}}) {{body}}",
+      "function ({{params}} = {{defaults}}) {{body}}",
+      "function* ({{params}}) {{body}}",
+      "function* () {{body}}",
+      "({{params}} = {{defaults}}) {{body}}"
+    ]
+  },
+  "ThisExpression": {
+    "productions": {},
+    "template": [
+      "this"
+    ]
+  },
+  "Identifier": {
+    "productions": {},
+    "template": []
+  },
+  "BlockStatement": {
+    "productions": {
+      "body": [
+        "ExpressionStatement",
+        "IfStatement",
+        "VariableDeclaration",
+        "FunctionDeclaration",
+        "ThrowStatement",
+        "ReturnStatement",
+        "SwitchStatement",
+        "WhileStatement",
+        "BreakStatement",
+        "ForStatement",
+        "TryStatement",
+        "DoWhileStatement",
+        "ForInStatement",
+        "ContinueStatement",
+        "LabeledStatement"
+      ]
+    },
+    "template": [
+      "{ {{body}} }",
+      "{ }"
+    ]
+  },
+  "IfStatement": {
+    "productions": {
+      "test": [
+        "LogicalExpression",
+        "BinaryExpression",
+        "UnaryExpression",
+        "MemberExpression",
+        "CallExpression",
+        "Identifier",
+        "Literal"
+      ],
+      "consequent": [
+        "BlockStatement",
+        "ExpressionStatement",
+        "VariableDeclaration",
+        "FunctionDeclaration"
+      ],
+      "alternate": [
+        "IfStatement",
+        "BlockStatement",
+        "ExpressionStatement",
+        "EmptyStatement"
+      ]
+    },
+    "template": [
+      "if ({{test}}) {{consequent}} else {{alternate}}",
+      "if ({{test}}) {{consequent}}"
+    ]
+  },
+  "Literal": {
+    "productions": {},
+    "template": []
+  },
+  "LogicalExpression": {
+    "productions": {
+      "left": [
+        "BinaryExpression",
+        "LogicalExpression",
+        "Identifier",
+        "UnaryExpression",
+        "CallExpression",
+        "MemberExpression"
+      ],
+      "right": [
+        "MemberExpression",
+        "BinaryExpression",
+        "CallExpression",
+        "LogicalExpression",
+        "UnaryExpression",
+        "Identifier",
+        "ObjectExpression"
+      ]
+    },
+    "template": [
+      "{{left}} && {{right}}",
+      "{{left}} || {{right}}",
+      "{{left}} && ({{right}})"
+    ]
+  },
+  "BinaryExpression": {
+    "productions": {
+      "left": [
+        "UnaryExpression",
+        "Literal",
+        "Identifier",
+        "CallExpression",
+        "BinaryExpression",
+        "MemberExpression",
+        "AssignmentExpression",
+        "LogicalExpression",
+        "UpdateExpression",
+        "TemplateLiteral",
+        "FunctionExpression",
+        "ArrayExpression",
+        "ThisExpression"
+      ],
+      "right": [
+        "Literal",
+        "Identifier",
+        "CallExpression",
+        "MemberExpression",
+        "ConditionalExpression",
+        "ObjectExpression",
+        "BinaryExpression",
+        "ArrayExpression"
+      ]
+    },
+    "template": [
+      "{{left}} === {{right}}",
+      "{{left}} !== {{right}}",
+      "{{left}} + {{right}}",
+      "{{left}} >= {{right}}",
+      "{{left}} <= {{right}}",
+      "{{left}} < {{right}}",
+      "{{left}} * {{right}}",
+      "{{left}} - {{right}}",
+      "{{left}} > {{right}}",
+      "({{left}}) + {{right}}",
+      "{{left}} >> {{right}}",
+      "{{left}} & {{right}}",
+      "{{left}} - ({{right}})",
+      "({{left}}) > {{right}}",
+      "({{left}}) === {{right}}",
+      "{{left}} instanceof {{right}}",
+      "({{left}}) * {{right}}",
+      "{{left}} ^ {{right}}",
+      "{{left}} | {{right}}",
+      "{{left}} / {{right}}",
+      "{{left}} % {{right}}",
+      "{{left}} << {{right}}",
+      "{{left}} >>> {{right}}",
+      "{{left}} == {{right}}",
+      "{{left}} != {{right}}",
+      "{{left}} in {{right}}",
+      "{{left}} + ({{right}})"
+    ]
+  },
+  "MemberExpression": {
+    "productions": {
+      "object": [
+        "Identifier",
+        "Literal",
+        "ArrayExpression",
+        "MemberExpression",
+        "CallExpression",
+        "ThisExpression",
+        "NewExpression",
+        "FunctionExpression"
+      ],
+      "property": [
+        "Identifier",
+        "MemberExpression",
+        "UpdateExpression",
+        "BinaryExpression",
+        "Literal",
+        "SequenceExpression"
+      ]
+    },
+    "template": [
+      "{{object}}.{{property}}",
+      "{{object}}[{{property}}]"
+    ]
+  },
+  "UnaryExpression": {
+    "productions": {
+      "argument": [
+        "Identifier",
+        "CallExpression",
+        "MemberExpression",
+        "LogicalExpression",
+        "BinaryExpression",
+        "Literal"
+      ]
+    },
+    "template": [
+      "typeof {{argument}}",
+      "!{{argument}}",
+      "delete {{argument}}",
+      "!({{argument}})",
+      "-{{argument}}",
+      "void {{argument}}",
+      "+{{argument}}",
+      "~{{argument}}"
+    ]
+  },
+  "ArrayExpression": {
+    "productions": {
+      "elements": [
+        "Literal",
+        "Identifier",
+        "MemberExpression",
+        "AssignmentExpression",
+        "BinaryExpression"
+      ]
+    },
+    "template": [
+      "[{{elements}}]",
+      "[ {{elements}}, ]",
+      "[]"
+    ]
+  },
+  "AssignmentExpression": {
+    "productions": {
+      "left": [
+        "MemberExpression",
+        "Identifier",
+        "ArrayPattern",
+        "ObjectPattern"
+      ],
+      "right": [
+        "ObjectExpression",
+        "Literal",
+        "ArrayExpression",
+        "BinaryExpression",
+        "Identifier",
+        "CallExpression",
+        "ConditionalExpression",
+        "MemberExpression",
+        "UpdateExpression",
+        "LogicalExpression",
+        "NewExpression",
+        "AssignmentExpression",
+        "UnaryExpression",
+        "FunctionExpression"
+      ]
+    },
+    "template": [
+      "{{left}} = {{right}}",
+      "{{left}} += {{right}}",
+      "{{left}} -= {{right}}",
+      "{{left}} *= {{right}}",
+      "{{left}} /= {{right}}",
+      "{{left}} %= {{right}}",
+      "{{left}} <<= {{right}}",
+      "{{left}} >>= {{right}}",
+      "{{left}} >>>= {{right}}",
+      "{{left}} &= {{right}}",
+      "{{left}} ^= {{right}}",
+      "{{left}} |= {{right}}",
+      "{{left}} = ({{right}})"
+    ]
+  },
+  "ObjectExpression": {
+    "productions": {
+      "properties": [
+        "Property"
+      ]
+    },
+    "template": [
+      "{}",
+      "{ {{properties}}, }",
+      "{ {{properties}} }"
+    ]
+  },
+  "VariableDeclaration": {
+    "productions": {
+      "declarations": [
+        "VariableDeclarator"
+      ]
+    },
+    "template": [
+      "var {{declarations}};",
+      "const {{declarations}};",
+      "let {{declarations}};",
+      "let {{declarations}}",
+      "const {{declarations}}",
+      "var {{declarations}}"
+    ]
+  },
+  "FunctionDeclaration": {
+    "productions": {
+      "id": [
+        "Identifier"
+      ],
+      "params": [
+        "Identifier",
+        "ArrayPattern",
+        "ObjectPattern"
+      ],
+      "defaults": [
+        "Literal"
+      ],
+      "body": [
+        "BlockStatement"
+      ]
+    },
+    "template": [
+      "function {{id}}({{params}}) {{body}}",
+      "function {{id}}() {{body}}",
+      "function {{id}}({{params}} = {{defaults}}) {{body}}",
+      "function* {{id}}({{params}}) {{body}}",
+      "function* {{id}}() {{body}}"
+    ]
+  },
+  "VariableDeclarator": {
+    "productions": {
+      "id": [
+        "Identifier",
+        "ArrayPattern",
+        "ObjectPattern"
+      ],
+      "init": [
+        "BinaryExpression",
+        "CallExpression",
+        "Literal",
+        "Identifier",
+        "MemberExpression",
+        "NewExpression",
+        "LogicalExpression",
+        "ArrayExpression",
+        "ObjectExpression",
+        "FunctionExpression",
+        "ClassExpression",
+        "AssignmentExpression"
+      ]
+    },
+    "template": [
+      "{{id}}",
+      "{{id}} = {{init}}"
+    ]
+  },
+  "Property": {
+    "productions": {
+      "key": [
+        "Identifier",
+        "Literal"
+      ],
+      "value": [
+        "Literal",
+        "NewExpression",
+        "Identifier",
+        "ObjectExpression",
+        "BinaryExpression",
+        "MemberExpression",
+        "CallExpression",
+        "ArrayExpression",
+        "FunctionExpression",
+        "ConditionalExpression",
+        "UnaryExpression",
+        "ArrayPattern",
+        "ObjectPattern",
+        "ArrowFunctionExpression"
+      ]
+    },
+    "template": [
+      "{{key}}: {{value}}",
+      "{{key}}{value}}",
+      "[{{key}}]: {{value}}",
+      "*{{key}}{{value}}",
+      "{{key}}{{value}}",
+      "get {{key}}{{value}}",
+      "set {{key}}{{value}}",
+      "[{{key}}]{{value}}"
+    ]
+  },
+  "NewExpression": {
+    "productions": {
+      "callee": [
+        "Identifier",
+        "TaggedTemplateExpression",
+        "NewExpression",
+        "MemberExpression"
+      ],
+      "arguments": [
+        "Literal",
+        "BinaryExpression",
+        "Identifier",
+        "MemberExpression",
+        "CallExpression"
+      ]
+    },
+    "template": [
+      "new {{callee}}({{arguments}})",
+      "new {{callee}}()"
+    ]
+  },
+  "ThrowStatement": {
+    "productions": {
+      "argument": [
+        "NewExpression",
+        "CallExpression",
+        "Identifier",
+        "BinaryExpression",
+        "ObjectExpression"
+      ]
+    },
+    "template": [
+      "throw {{argument}};"
+    ]
+  },
+  "ReturnStatement": {
+    "productions": {
+      "argument": [
+        "LogicalExpression",
+        "BinaryExpression",
+        "ObjectExpression",
+        "Literal",
+        "CallExpression",
+        "Identifier",
+        "NewExpression",
+        "ThisExpression",
+        "MemberExpression",
+        "ConditionalExpression",
+        "UnaryExpression"
+      ]
+    },
+    "template": [
+      "return {{argument}};",
+      "return;"
+    ]
+  },
+  "UpdateExpression": {
+    "productions": {
+      "argument": [
+        "Identifier",
+        "MemberExpression"
+      ]
+    },
+    "template": [
+      "{{argument}}++",
+      "++{{argument}}",
+      "--{{argument}}",
+      "{{argument}}--"
+    ]
+  },
+  "SwitchStatement": {
+    "productions": {
+      "discriminant": [
+        "Identifier",
+        "MemberExpression"
+      ],
+      "cases": [
+        "SwitchCase"
+      ]
+    },
+    "template": [
+      "switch ({{discriminant}}) { {{cases}} }",
+      "switch ({{discriminant}}) { }"
+    ]
+  },
+  "SwitchCase": {
+    "productions": {
+      "test": [
+        "Literal",
+        "MemberExpression"
+      ],
+      "consequent": [
+        "ReturnStatement",
+        "IfStatement",
+        "ExpressionStatement",
+        "BreakStatement",
+        "ThrowStatement",
+        "ForStatement",
+        "VariableDeclaration"
+      ]
+    },
+    "template": [
+      "case {{test}}:",
+      "case {{test}}: {{consequent}}",
+      "default: {{consequent}}"
+    ]
+  },
+  "WhileStatement": {
+    "productions": {
+      "test": [
+        "BinaryExpression",
+        "CallExpression",
+        "LogicalExpression",
+        "UnaryExpression",
+        "Literal"
+      ],
+      "body": [
+        "BlockStatement",
+        "ExpressionStatement",
+        "BreakStatement"
+      ]
+    },
+    "template": [
+      "while ({{test}}) {{body}}"
+    ]
+  },
+  "BreakStatement": {
+    "productions": {
+      "label": [
+        "Identifier"
+      ]
+    },
+    "template": [
+      "break;",
+      "break {{label}};"
+    ]
+  },
+  "ForStatement": {
+    "productions": {
+      "init": [
+        "AssignmentExpression",
+        "SequenceExpression",
+        "VariableDeclaration"
+      ],
+      "test": [
+        "BinaryExpression"
+      ],
+      "update": [
+        "UpdateExpression",
+        "AssignmentExpression"
+      ],
+      "body": [
+        "BlockStatement",
+        "EmptyStatement",
+        "ExpressionStatement",
+        "BreakStatement"
+      ]
+    },
+    "template": [
+      "for ({{init}}; {{test}}; {{update}}) {{body}}",
+      "for (;;) {{body}}",
+      "for ({{init}};;){{body}}",
+      "for (;;){{body}}",
+      "for ({{init}};){{body}}",
+      "for ({{init}}; {{test}};){{body}}",
+      "for ({{init}}; {{test}}; {{update}}){{body}}"
+    ]
+  },
+  "ConditionalExpression": {
+    "productions": {
+      "test": [
+        "BinaryExpression",
+        "LogicalExpression",
+        "Identifier",
+        "CallExpression",
+        "MemberExpression",
+        "Literal"
+      ],
+      "consequent": [
+        "Literal",
+        "CallExpression",
+        "MemberExpression",
+        "ArrayExpression",
+        "Identifier"
+      ],
+      "alternate": [
+        "Literal",
+        "CallExpression",
+        "MemberExpression",
+        "ArrayExpression",
+        "Identifier",
+        "ConditionalExpression"
+      ]
+    },
+    "template": [
+      "{{test}} ? {{consequent}} : {{alternate}}"
+    ]
+  },
+  "TryStatement": {
+    "productions": {
+      "block": [
+        "BlockStatement"
+      ],
+      "guardedHandlers": [],
+      "handlers": [
+        "CatchClause"
+      ],
+      "handler": [
+        "CatchClause"
+      ],
+      "finalizer": [
+        "BlockStatement"
+      ]
+    },
+    "template": [
+      "try {{block}} {{handlers}}",
+      "try {{block}} finally {{finalizer}}",
+      "try {{block}} {{handlers}}alizer}}"
+    ]
+  },
+  "CatchClause": {
+    "productions": {
+      "param": [
+        "Identifier",
+        "ArrayPattern",
+        "ObjectPattern"
+      ],
+      "body": [
+        "BlockStatement"
+      ]
+    },
+    "template": [
+      "catch ({{param}}) {{body}}"
+    ]
+  },
+  "SequenceExpression": {
+    "productions": {
+      "expressions": [
+        "AssignmentExpression",
+        "Identifier"
+      ]
+    },
+    "template": [
+      "{{expressions}}"
+    ]
+  },
+  "DoWhileStatement": {
+    "productions": {
+      "body": [
+        "BlockStatement",
+        "ExpressionStatement"
+      ],
+      "test": [
+        "BinaryExpression",
+        "LogicalExpression",
+        "Literal"
+      ]
+    },
+    "template": [
+      "do {{body}} while ({{test}});"
+    ]
+  },
+  "ForInStatement": {
+    "productions": {
+      "left": [
+        "Identifier",
+        "VariableDeclaration",
+        "MemberExpression"
+      ],
+      "right": [
+        "Identifier",
+        "Literal"
+      ],
+      "body": [
+        "BlockStatement",
+        "EmptyStatement",
+        "ExpressionStatement"
+      ]
+    },
+    "template": [
+      "for ({{left}} in {{right}}) {{body}}",
+      "for ({{left}} in {{right}}){{body}}"
+    ]
+  },
+  "ContinueStatement": {
+    "productions": {
+      "label": [
+        "Identifier"
+      ]
+    },
+    "template": [
+      "continue;",
+      "continue {{label}};"
+    ]
+  },
+  "EmptyStatement": {
+    "productions": {},
+    "template": [
+      ";"
+    ]
+  },
+  "DebuggerStatement": {
+    "productions": {},
+    "template": [
+      "debugger;"
+    ]
+  },
+  "undefined": {
+    "productions": {},
+    "template": []
+  },
+  "ArrowFunctionExpression": {
+    "productions": {
+      "params": [
+        "ArrayPattern",
+        "Identifier",
+        "ObjectPattern"
+      ],
+      "defaults": [
+        "Literal"
+      ],
+      "body": [
+        "ArrayExpression",
+        "Literal",
+        "BlockStatement",
+        "ObjectExpression",
+        "BinaryExpression",
+        "Identifier",
+        "ArrowFunctionExpression",
+        "SequenceExpression"
+      ]
+    },
+    "template": [
+      "({{params}}) => {{body}}",
+      "() => {{body}}",
+      "{{params}} => {{body}}",
+      "{{params}} => ({{body}})",
+      "({{params}} = {{defaults}}) => {{body}}",
+      "({{params}}) => ({{body}})"
+    ]
+  },
+  "ArrayPattern": {
+    "productions": {
+      "elements": [
+        "Identifier",
+        "ArrayPattern",
+        "ObjectPattern"
+      ]
+    },
+    "template": [
+      "[{{elements}}]",
+      "[ {{elements}}, ]",
+      "[]"
+    ]
+  },
+  "LabeledStatement": {
+    "productions": {
+      "label": [
+        "Identifier"
+      ],
+      "body": [
+        "ExpressionStatement",
+        "WhileStatement",
+        "ForStatement"
+      ]
+    },
+    "template": [
+      "{{label}}: {{body}}"
+    ]
+  },
+  "ObjectPattern": {
+    "productions": {
+      "properties": [
+        "Property"
+      ]
+    },
+    "template": [
+      "{ {{properties}} }",
+      "{ {{properties}}, }",
+      "{}",
+      "{{{properties}}}"
+    ]
+  },
+  "ClassDeclaration": {
+    "productions": {
+      "id": [
+        "Identifier"
+      ],
+      "body": [
+        "ClassBody"
+      ],
+      "superClass": [
+        "Literal"
+      ]
+    },
+    "template": [
+      "class {{id}} {{body}}",
+      "class {{id}} extends {{superClass}} {{body}}"
+    ]
+  },
+  "ClassBody": {
+    "productions": {
+      "body": [
+        "MethodDefinition"
+      ]
+    },
+    "template": [
+      "{ }",
+      "{ {{body}} }"
+    ]
+  },
+  "MethodDefinition": {
+    "productions": {
+      "key": [
+        "Identifier",
+        "Literal"
+      ],
+      "value": [
+        "FunctionExpression"
+      ]
+    },
+    "template": [
+      "{{key}}{{value}}",
+      "get {{key}}{{value}}",
+      "set {{key}}{{value}}",
+      "static {{key}}{{value}}",
+      "static get {{key}}{{value}}",
+      "static set {{key}}{{value}}",
+      "static [{{key}}]{{value}}",
+      "[{{key}}]{{value}}",
+      "static *[{{key}}]{{value}}",
+      "static *{{key}}{{value}}"
+    ]
+  },
+  "ClassExpression": {
+    "productions": {
+      "id": [
+        "Identifier"
+      ],
+      "superClass": [
+        "Literal"
+      ],
+      "body": [
+        "ClassBody"
+      ]
+    },
+    "template": [
+      "class {{id}} extends {{superClass}} {{body}}",
+      "class {{body}}",
+      "class {{id}} {{body}}",
+      "class extends {{superClass}} {{body}}"
+    ]
+  },
+  "YieldExpression": {
+    "productions": {
+      "argument": [
+        "Literal",
+        "Identifier"
+      ]
+    },
+    "template": [
+      "yield* {{argument}}",
+      "yield {{argument}}",
+      "yield"
+    ]
+  },
+  "ImportDeclaration": {
+    "productions": {
+      "specifiers": [],
+      "source": [
+        "Literal"
+      ]
+    },
+    "template": [
+      "import {{source}};"
+    ]
+  },
+  "TemplateLiteral": {
+    "productions": {
+      "quasis": [
+        "TemplateElement"
+      ],
+      "expressions": [
+        "Identifier",
+        "TemplateLiteral",
+        "BinaryExpression"
+      ]
+    },
+    "template": [
+      "{{quasis}}",
+      "{{quasis}} {{exp{{quasis}}ssions}} }`",
+      "{{quasis}} {{expressions}} }`",
+      "{{quasis}} {{expressions}h`"
+    ]
+  },
+  "TemplateElement": {
+    "productions": {},
+    "template": [
+      "`$`",
+      "`42`",
+      "`hello ${",
+      "}`",
+      "`token ${",
+      "`nested ${",
+      "} blah`",
+      "`deeply`"
+    ]
+  },
+  "TaggedTemplateExpression": {
+    "productions": {
+      "tag": [
+        "Identifier"
+      ],
+      "quasi": [
+        "TemplateLiteral"
+      ]
+    },
+    "template": [
+      "{{tag}}{{quasi}}"
+    ]
+  },
+  "WithStatement": {
+    "productions": {},
+    "template": []
+  }
+}

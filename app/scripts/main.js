@@ -25,12 +25,11 @@ function runApp() {
             loadFile(examplesElement.value);
         }
         examplesElement.addEventListener('change', onExampleChanged);
-        examples.forEach(function (_a) {
-            var title = _a.title, file = _a.file;
-            var option = document.createElement('option');
-            option.textContent = title;
-            option.value = file;
-            examplesElement.appendChild(option);
+        examples.forEach(({ title: title, file: file }), {
+            var: option = document.createElement('option'),
+            option: .textContent = title,
+            option: .value = file,
+            examplesElement: .appendChild(option)
         });
         var editor = document.querySelector('#editor');
         var bootstrap = document.querySelector('#bootstrap');
@@ -39,13 +38,8 @@ function runApp() {
         }
         var output = document.querySelector('#output');
         var variables = document.querySelector('#variables');
-        variables.values = ObjectUtils.extractCompletions(localStorage);
         variables.shouldSort = false;
         var callstack = document.querySelector('#callstack');
-        callstack.values = ObjectUtils.extractCompletions(window).map(function (row) {
-            var name = row.name, value = row.value;
-            return { name: name, value: value };
-        });
         [variables, callstack].forEach(fixCss);
         var evaluator = new EvaluationSystem2.EditorEvaluator(editor), logsCounter = 0, console = {
             log: function () {
