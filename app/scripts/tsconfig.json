@@ -15,7 +15,9 @@
     "files": [
         "./definitions.d.ts",
         "./evaluation-system2.ts",
+        "./main-structural-completions.ts",
         "./main.ts",
-        "./object-utils.ts"
+        "./object-utils.ts",
+        "./structural-completions.ts"
     ]
 }

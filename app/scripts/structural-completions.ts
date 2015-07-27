@@ -7,30 +7,34 @@ module StructuralCompletions {
 
     var results = [], visited = [];
 
-    function templateMath(token) {
-      return 'template' in grammar[token] && grammar[token].template.some(template=>template.indexOf(filterText) >= 0)
+    function templateMatch(token) {
+      return 'template' in grammar[token]
+        && grammar[token].template.some(template => template.indexOf(filterText) >= 0);
     }
 
-    function iter(token:string) {
-      if (visited.indexOf(token) >= 0) {
+    function iter(tokenName:string) {
+      if (visited.indexOf(tokenName) >= 0) {
         return;
       }
-      visited.push(token);
+      visited.push(tokenName);
 
-      if (templateMath(token) || token.indexOf(filterText) >= 0) {
-        grammar[token].template.forEach(template=> {
-          results.push({type: token, name: template});
+      if (templateMatch(tokenName) || tokenName.indexOf(filterText) >= 0) {
+        grammar[tokenName].template.forEach(template=> {
+          results.push({type: tokenName, name: template});
+        });
+      } else {
+        var productions = grammar[tokenName].productions;
+
+        Object.keys(productions).forEach(productionName => {
+          Object.keys(productions[productionName]).forEach(key => {
+            let token = productions[productionName][key];
+            if (token) {
+              iter(token);
+            }
+          });
         });
       }
-      var productions = grammar[token].productions;
-      Object.keys(productions).forEach(productionName => {
-        Object.keys(productions[productionName]).forEach(key => {
-          let token = productions[productionName][key];
-          if (token) {
-            iter(token);
-          }
-        });
-      });
+
     }
 
     iter(tokenName);

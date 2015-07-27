@@ -6,28 +6,31 @@ var StructuralCompletions;
     function getHints(grammar, filterText, tokenName) {
         if (tokenName === void 0) { tokenName = 'Program'; }
         var results = [], visited = [];
-        function templateMath(token) {
-            return 'template' in grammar[token] && grammar[token].template.some(function (template) { return template.indexOf(filterText) >= 0; });
+        function templateMatch(token) {
+            return 'template' in grammar[token]
+                && grammar[token].template.some(function (template) { return template.indexOf(filterText) >= 0; });
         }
-        function iter(token) {
-            if (visited.indexOf(token) >= 0) {
+        function iter(tokenName) {
+            if (visited.indexOf(tokenName) >= 0) {
                 return;
             }
-            visited.push(token);
-            if (templateMath(token) || token.indexOf(filterText) >= 0) {
-                grammar[token].template.forEach(function (template) {
-                    results.push({ type: token, name: template });
+            visited.push(tokenName);
+            if (templateMatch(tokenName) || tokenName.indexOf(filterText) >= 0) {
+                grammar[tokenName].template.forEach(function (template) {
+                    results.push({ type: tokenName, name: template });
                 });
             }
-            var productions = grammar[token].productions;
-            Object.keys(productions).forEach(function (productionName) {
-                Object.keys(productions[productionName]).forEach(function (key) {
-                    var token = productions[productionName][key];
-                    if (token) {
-                        iter(token);
-                    }
+            else {
+                var productions = grammar[tokenName].productions;
+                Object.keys(productions).forEach(function (productionName) {
+                    Object.keys(productions[productionName]).forEach(function (key) {
+                        var token = productions[productionName][key];
+                        if (token) {
+                            iter(token);
+                        }
+                    });
                 });
-            });
+            }
         }
         iter(tokenName);
         return results;
