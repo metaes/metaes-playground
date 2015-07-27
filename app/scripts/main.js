@@ -25,11 +25,12 @@ function runApp() {
             loadFile(examplesElement.value);
         }
         examplesElement.addEventListener('change', onExampleChanged);
-        examples.forEach(({ title: title, file: file }), {
-            var: option = document.createElement('option'),
-            option: .textContent = title,
-            option: .value = file,
-            examplesElement: .appendChild(option)
+        examples.forEach(function (_a) {
+            var title = _a.title, file = _a.file;
+            var option = document.createElement('option');
+            option.textContent = title;
+            option.value = file;
+            examplesElement.appendChild(option);
         });
         var editor = document.querySelector('#editor');
         var bootstrap = document.querySelector('#bootstrap');

@@ -1,7 +1,8 @@
 /// <reference path="./evaluation-system2.ts" />
+/// <reference path="./editor-evaluator.ts" />
 /// <reference path="./object-utils.ts" />
 function runApp() {
-    var editor = document.querySelector('#editor'), evaluator = new EvaluationSystem2.EditorEvaluator(editor);
+    var editor = document.querySelector('#editor'), evaluator = new EditorEvaluator(editor);
     ObjectUtils.httpGet('./data/grammar.json').then(function (grammar) {
         evaluator.startStructuralCompletion(JSON.parse(grammar));
     });

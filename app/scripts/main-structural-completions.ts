@@ -1,10 +1,11 @@
 /// <reference path="./evaluation-system2.ts" />
+/// <reference path="./editor-evaluator.ts" />
 /// <reference path="./object-utils.ts" />
 
 function runApp() {
   var
     editor:Editor.MetaesEditor = <any>document.querySelector('#editor'),
-    evaluator = new EvaluationSystem2.EditorEvaluator(editor);
+    evaluator = new EditorEvaluator(editor);
 
   ObjectUtils.httpGet('./data/grammar.json').then(grammar=> {
     evaluator.startStructuralCompletion(JSON.parse(grammar));
