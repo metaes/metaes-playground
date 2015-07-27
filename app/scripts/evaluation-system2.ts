@@ -249,27 +249,34 @@ module EvaluationSystem2 {
       });
     }
 
+    completionSelectedHandler(e, start, stop) {
+      if (e && e.detail) {
+        var value = e.detail.completion;
+        var from = this.editor.posFromIndex(start), to = this.editor.posFromIndex(stop);
+        this.editor.codeMirror.getDoc().replaceRange(value, from, to);
+        this.editor.completionsComponent.hide();
+      }
+    }
+
+
+    setMode(listener:EditorEventListener) {
+      this.editorEventsBinder.setListener(listener);
+    }
+
     startStructuralCompletion(grammar) {
       this.lastGrammar = grammar;
 
       var start = this.editor.getCurrentCursorIndex(), stop;
 
-      // TODO: DRY
       var onCompletionSelected = (e?) => {
         this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
-        if (e && e.detail) {
-          var value = e.detail.completion;
-          var from = this.editor.posFromIndex(start), to = this.editor.posFromIndex(stop);
-          this.editor.codeMirror.getDoc().replaceRange(value, from, to);
-          this.editor.completionsComponent.hide();
-
-          // repeat forever
-          this.startIdleMode();
-        }
+        this.completionSelectedHandler(e, start, stop);
+        // repeat forever
+        this.startIdleMode();
       };
       this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
 
-      this.editorEventsBinder.setListener({
+      this.setMode({
         changeListener: () => {
           var now = this.editor.getCurrentCursorIndex();
           var filter = this.editor.getValue().substring(start, stop = now);
@@ -299,18 +306,13 @@ module EvaluationSystem2 {
 
       var onCompletionSelected = (e?) => {
         this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
-        if (e && e.detail) {
-          var value = e.detail.completion;
-          var from = this.editor.posFromIndex(start), to = this.editor.posFromIndex(stop);
-          this.editor.codeMirror.getDoc().replaceRange(value, from, to);
-          this.editor.completionsComponent.hide();
-        }
+        this.completionSelectedHandler(e, start, stop);
         this.listenToWholeEditor();
         this.evaluate();
       };
       this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
 
-      this.editorEventsBinder.setListener({
+      this.setMode({
         changeListener: () => {
           var now = this.editor.getCurrentCursorIndex();
           var filter = this.editor.getValue().substring(start, stop = now);
@@ -342,7 +344,7 @@ module EvaluationSystem2 {
         lastGlobalAst = this.evaluator.ast;
 
       // listen to part
-      this.editorEventsBinder.setListener({
+      this.setMode({
         changeListener: () => {
           this.evaluator.executedNodes.length = 0;
           var

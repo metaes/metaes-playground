@@ -168,24 +168,29 @@ var EvaluationSystem2;
                 }
             });
         };
+        EditorEvaluator.prototype.completionSelectedHandler = function (e, start, stop) {
+            if (e && e.detail) {
+                var value = e.detail.completion;
+                var from = this.editor.posFromIndex(start), to = this.editor.posFromIndex(stop);
+                this.editor.codeMirror.getDoc().replaceRange(value, from, to);
+                this.editor.completionsComponent.hide();
+            }
+        };
+        EditorEvaluator.prototype.setMode = function (listener) {
+            this.editorEventsBinder.setListener(listener);
+        };
         EditorEvaluator.prototype.startStructuralCompletion = function (grammar) {
             var _this = this;
             this.lastGrammar = grammar;
             var start = this.editor.getCurrentCursorIndex(), stop;
-            // TODO: DRY
             var onCompletionSelected = function (e) {
                 _this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
-                if (e && e.detail) {
-                    var value = e.detail.completion;
-                    var from = _this.editor.posFromIndex(start), to = _this.editor.posFromIndex(stop);
-                    _this.editor.codeMirror.getDoc().replaceRange(value, from, to);
-                    _this.editor.completionsComponent.hide();
-                    // repeat forever
-                    _this.startIdleMode();
-                }
+                _this.completionSelectedHandler(e, start, stop);
+                // repeat forever
+                _this.startIdleMode();
             };
             this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
-            this.editorEventsBinder.setListener({
+            this.setMode({
                 changeListener: function () {
                     var now = _this.editor.getCurrentCursorIndex();
                     var filter = _this.editor.getValue().substring(start, stop = now);
@@ -215,17 +220,12 @@ var EvaluationSystem2;
             var start = this.editor.getCurrentCursorIndex() + diff, stop;
             var onCompletionSelected = function (e) {
                 _this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
-                if (e && e.detail) {
-                    var value = e.detail.completion;
-                    var from = _this.editor.posFromIndex(start), to = _this.editor.posFromIndex(stop);
-                    _this.editor.codeMirror.getDoc().replaceRange(value, from, to);
-                    _this.editor.completionsComponent.hide();
-                }
+                _this.completionSelectedHandler(e, start, stop);
                 _this.listenToWholeEditor();
                 _this.evaluate();
             };
             this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
-            this.editorEventsBinder.setListener({
+            this.setMode({
                 changeListener: function () {
                     var now = _this.editor.getCurrentCursorIndex();
                     var filter = _this.editor.getValue().substring(start, stop = now);
@@ -249,7 +249,7 @@ var EvaluationSystem2;
             var _this = this;
             var bestNode = this.findBestMatchingASTNodeInExecutedNodes(), range = bestNode.range, wholeProgram = this.editor.getValue(), parentNodeWrapper = ObjectUtils.parentNodeOf(bestNode, this.evaluator.ast), parentNodeKey = parentNodeWrapper.key, parentNode = parentNodeWrapper.node, lastGlobalAst = this.evaluator.ast;
             // listen to part
-            this.editorEventsBinder.setListener({
+            this.setMode({
                 changeListener: function () {
                     _this.evaluator.executedNodes.length = 0;
                     var edited = _this.editor.getMarkersByName('editedCode')[0].find(), editedText = _this.editor.getRange(edited.from, edited.to);
