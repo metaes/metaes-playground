@@ -4,7 +4,7 @@
 function runApp() {
     var editor = document.querySelector('#editor'), evaluator = new EditorEvaluator(editor);
     ObjectUtils.httpGet('./data/grammar.json').then(function (grammar) {
-        evaluator.startStructuralCompletion(JSON.parse(grammar));
+        evaluator.startMode('CompleteStructurally', JSON.parse(grammar));
     });
 }
 (function (document) {

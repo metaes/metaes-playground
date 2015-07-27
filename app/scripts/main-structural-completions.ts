@@ -8,7 +8,7 @@ function runApp() {
     evaluator = new EditorEvaluator(editor);
 
   ObjectUtils.httpGet('./data/grammar.json').then(grammar=> {
-    evaluator.startStructuralCompletion(JSON.parse(grammar));
+    evaluator.startMode('CompleteStructurally', JSON.parse(grammar));
   });
 
 }
