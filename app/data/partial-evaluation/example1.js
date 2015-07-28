@@ -10,5 +10,5 @@ function httpGet(filePath) {
 }
 
 httpGet('index.html').then(function (html) {
-  console.log(html);
+
 });

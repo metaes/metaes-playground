@@ -33,21 +33,20 @@ class EditorEvaluator {
     EvaluateExpression: () => {
       var
         bestNode = this.findBestMatchingASTNodeInExecutedNodes(),
+        newEnv = bestNode.env,
         range = bestNode.range,
         wholeProgram = this.editor.getValue(),
         parentNodeWrapper = ObjectUtils.parentNodeOf(bestNode, this.evaluator.ast),
-        parentNodeKey = parentNodeWrapper.key,
-        parentNode = parentNodeWrapper.node,
-        lastGlobalAst = this.evaluator.ast;
+        parentNode = parentNodeWrapper.node;
 
       this.setEditorListener({
         changeListener: () => {
           this.evaluator.executedNodes.length = 0;
           var
-            edited:any = this.editor.getMarkersByName('editedCode')[0].find(),
-            editedText = this.editor.getRange(edited.from, edited.to);
+            editedAreaMarker:any = this.editor.getMarkersByName('editedCode')[0].find(),
+            editedText = this.editor.getRange(editedAreaMarker.from, editedAreaMarker.to);
 
-          this.evaluator.evaluate(editedText, bestNode.env)
+          this.evaluator.evaluate(editedText, newEnv)
             .then((result:EvaluationSystem2.SuccessValue) => {
               if (parentNode.type === 'FunctionDeclaration') {
                 parentNode.lastValue.metaFunction.e.body = result.ast;

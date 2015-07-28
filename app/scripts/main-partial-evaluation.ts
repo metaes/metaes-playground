@@ -9,11 +9,10 @@ function runApp() {
 
   let get = ObjectUtils.httpGet;
 
-  Promise
-    .all([get('./data/partial-evaluation/example1.js'), get('./data/grammar.json')])
-    .then(([file, grammar])=> {
+  ObjectUtils.httpGet('./data/partial-evaluation/example1.js')
+    .then(file => {
       editor.setValue(file);
-      evaluator.startMode('EvaluateExpression', JSON.parse(grammar));
+      evaluator.startMode('Idle');
     });
 }
 

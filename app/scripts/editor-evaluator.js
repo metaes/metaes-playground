@@ -23,12 +23,12 @@ var EditorEvaluator = (function () {
                 });
             },
             EvaluateExpression: function () {
-                var bestNode = _this.findBestMatchingASTNodeInExecutedNodes(), range = bestNode.range, wholeProgram = _this.editor.getValue(), parentNodeWrapper = ObjectUtils.parentNodeOf(bestNode, _this.evaluator.ast), parentNodeKey = parentNodeWrapper.key, parentNode = parentNodeWrapper.node, lastGlobalAst = _this.evaluator.ast;
+                var bestNode = _this.findBestMatchingASTNodeInExecutedNodes(), newEnv = bestNode.env, range = bestNode.range, wholeProgram = _this.editor.getValue(), parentNodeWrapper = ObjectUtils.parentNodeOf(bestNode, _this.evaluator.ast), parentNode = parentNodeWrapper.node;
                 _this.setEditorListener({
                     changeListener: function () {
                         _this.evaluator.executedNodes.length = 0;
-                        var edited = _this.editor.getMarkersByName('editedCode')[0].find(), editedText = _this.editor.getRange(edited.from, edited.to);
-                        _this.evaluator.evaluate(editedText, bestNode.env)
+                        var editedAreaMarker = _this.editor.getMarkersByName('editedCode')[0].find(), editedText = _this.editor.getRange(editedAreaMarker.from, editedAreaMarker.to);
+                        _this.evaluator.evaluate(editedText, newEnv)
                             .then(function (result) {
                             if (parentNode.type === 'FunctionDeclaration') {
                                 parentNode.lastValue.metaFunction.e.body = result.ast;

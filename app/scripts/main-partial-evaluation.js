@@ -4,12 +4,10 @@
 function runApp() {
     var editor = document.querySelector('#editor'), evaluator = new EditorEvaluator(editor);
     var get = ObjectUtils.httpGet;
-    Promise
-        .all([get('./data/partial-evaluation/example1.js'), get('./data/grammar.json')])
-        .then(function (_a) {
-        var file = _a[0], grammar = _a[1];
+    ObjectUtils.httpGet('./data/partial-evaluation/example1.js')
+        .then(function (file) {
         editor.setValue(file);
-        evaluator.startMode('EvaluateExpression', JSON.parse(grammar));
+        evaluator.startMode('Idle');
     });
 }
 (function (document) {
