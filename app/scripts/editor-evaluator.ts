@@ -23,7 +23,7 @@ class EditorEvaluator {
             case 32: // ctrl + space
               if (event.ctrlKey) {
                 event.preventDefault();
-                this.startMode('CompleteStructurally', this.lastGrammar);
+                this.startMode('EvaluateExpression', this.lastGrammar);
               }
               return;
           }
@@ -64,7 +64,7 @@ class EditorEvaluator {
 
             this.editor.clearMarkers('disabledCode');
             this.editor.clearMarkers('editedCode');
-            this.startMode('EvaluateEditor');
+            this.startMode('Idle');
           }
         }
       });

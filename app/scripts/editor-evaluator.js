@@ -15,7 +15,7 @@ var EditorEvaluator = (function () {
                             case 32:
                                 if (event.ctrlKey) {
                                     event.preventDefault();
-                                    _this.startMode('CompleteStructurally', _this.lastGrammar);
+                                    _this.startMode('EvaluateExpression', _this.lastGrammar);
                                 }
                                 return;
                         }
@@ -44,7 +44,7 @@ var EditorEvaluator = (function () {
                             event.preventDefault();
                             _this.editor.clearMarkers('disabledCode');
                             _this.editor.clearMarkers('editedCode');
-                            _this.startMode('EvaluateEditor');
+                            _this.startMode('Idle');
                         }
                     }
                 });
