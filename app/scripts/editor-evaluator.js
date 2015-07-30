@@ -175,6 +175,7 @@ var EditorEvaluator = (function () {
         }
         var mode = this.modes[modeName];
         mode(params || {});
+        this.editor.modeName = modeName;
         this.modesStack.push({ mode: mode, params: params });
     };
     EditorEvaluator.prototype.stopLastMode = function (alternativeParams) {

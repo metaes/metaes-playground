@@ -3,23 +3,17 @@
 /// <reference path="../../scripts/evaluation-system2.ts" />
 
 module Editor {
-
-  interface TextMarkerWithRange extends CodeMirror.TextMarker {
-    from:CodeMirror.Position;
-    to:CodeMirror.Position;
-  }
-
   type Range = [number, number];
 
   export class MetaesEditor extends ObjectUtils.PolymerElement {
     height = 500;
-
-    lastTextMarker:TextMarkerWithRange;
     markersByName:{[key:string]: CodeMirror.TextMarker[]};
     completionsComponent:MetaesCompletions.MetaesCompletionsElement;
     codeMirror:CodeMirror.Editor;
-
     tooltip:HTMLElement;
+
+    // evaluator mode name
+    modeName:string;
 
     heightChanged() {
       var value = this.height || 500;

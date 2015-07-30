@@ -4,6 +4,7 @@
   <template>
     <link rel="stylesheet" href="metaes-editor.css">
     <div style="border:1px solid #eee; position: relative">
+      <span>{{modeName}}</span>
       <code-mirror id="editor" class="code-mirror"></code-mirror>
       <metaes-completions id="completionsComponent" style="display:none;position: absolute"></metaes-completions>
     </div>
