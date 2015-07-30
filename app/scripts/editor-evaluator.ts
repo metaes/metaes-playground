@@ -1,7 +1,7 @@
 /// <reference path="./evaluation-system2.ts" />
 
-interface Mode extends EvaluationSystem2.EditorEventsListener {
-
+interface Mode {
+  (params?:any):void;
 }
 
 class EditorEvaluator {
@@ -10,7 +10,9 @@ class EditorEvaluator {
   private lastBestNode:EvaluationSystem2.ASTNode;
   private lastGrammar:Object;
 
-  modes = {
+  private modesStack:{mode:Mode, params:Object}[] = [];
+
+  modes:{[name:string]: Mode} = {
     Idle: () => {
       this.setEditorListener({
         changeListener: () => {
@@ -30,6 +32,7 @@ class EditorEvaluator {
         }
       })
     },
+
     EvaluateExpression: () => {
       var
         bestNode = this.findBestMatchingASTNodeInExecutedNodes(),
@@ -41,7 +44,6 @@ class EditorEvaluator {
 
       this.setEditorListener({
         changeListener: () => {
-          this.evaluator.executedNodes.length = 0;
           var
             editedAreaMarker:any = this.editor.getMarkersByName('editedCode')[0].find(),
             editedText = this.editor.getRange(editedAreaMarker.from, editedAreaMarker.to);
@@ -70,6 +72,7 @@ class EditorEvaluator {
       this.editor.markTextByRanges('disabledCode', [[0, range[0]], [range[1], wholeProgram.length]]);
       this.editor.markTextByRange('editedCode', [range[0], range[1]]);
     },
+
     EvaluateEditor: () => {
       this.setEditorListener({
         changeListener: () => {
@@ -86,7 +89,7 @@ class EditorEvaluator {
           this.highlightNodeUnderTheCursor();
         },
         keydownListener: (editor, event:KeyboardEvent) => {
-          let init = (extractor, offset = 0)=> {
+          let init = (extractor, offset = 0) => {
             var completionsComponent = this.editor.completionsComponent;
             this.startMode("Complete", {extractor, offset});
             this.editor.updateCompletionsPosition();
@@ -114,6 +117,7 @@ class EditorEvaluator {
         }
       });
     },
+
     Complete: ({extractor, diff = 0}) => {
       var start = this.editor.getCurrentCursorIndex() + diff, stop;
 
@@ -145,40 +149,38 @@ class EditorEvaluator {
         }
       });
     },
+
     CompleteStructurally: (grammar) => {
       this.lastGrammar = grammar;
 
       var start = this.editor.getCurrentCursorIndex(), stop;
+      var completionsComponent = this.editor.completionsComponent;
 
       var onCompletionSelected = (e?) => {
-        this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
+        completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
         this.completionSelectedHandler(e, start, stop);
-        // repeat forever
-        this.startMode('Idle');
+        this.stopLastMode();
       };
-      this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+      completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+      completionsComponent.setValues(StructuralCompletions.getHints(grammar, ""));
+      completionsComponent.show();
 
       this.setEditorListener({
         changeListener: () => {
           var now = this.editor.getCurrentCursorIndex();
           var filter = this.editor.getValue().substring(start, stop = now);
-          var completionsComponent = this.editor.completionsComponent;
           completionsComponent.setFilterText(filter);
-          completionsComponent.setValues(StructuralCompletions.getHints(grammar, filter));
-          completionsComponent.show();
           this.editor.updateCompletionsPosition();
         },
         cursorActivityListener: () => {
-          // TODO: DRY
           var now = this.editor.getCurrentCursorIndex();
           if (now < start || now > stop) {
             onCompletionSelected();
-            this.editor.completionsComponent.hide();
-            return;
+            completionsComponent.hide();
           }
         },
         keydownListener: (editor, event:KeyboardEvent) => {
-          this.editor.completionsComponent.keyPressed(event);
+          completionsComponent.keyPressed(event);
         }
       });
     }
@@ -209,7 +211,20 @@ class EditorEvaluator {
     if (!(modeName in this.modes)) {
       throw new Error(`${modeName} mode doesn't exist.`);
     }
-    this.modes[modeName](params);
+    var mode = this.modes[modeName];
+    mode(params || {});
+    this.modesStack.push({mode, params});
+  }
+
+  stopLastMode(alternativeParams?):Mode {
+    var lastMode = this.modesStack.pop();
+
+    // run previous mode if present
+    if (this.modesStack.length) {
+      var {mode, params}= this.modesStack[this.modesStack.length - 1];
+      mode(alternativeParams || params);
+    }
+    return lastMode.mode;
   }
 
   completionSelectedHandler(e, start, stop) {

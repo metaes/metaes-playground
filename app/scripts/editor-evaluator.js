@@ -2,6 +2,7 @@
 var EditorEvaluator = (function () {
     function EditorEvaluator(editor) {
         var _this = this;
+        this.modesStack = [];
         this.modes = {
             Idle: function () {
                 _this.setEditorListener({
@@ -26,7 +27,6 @@ var EditorEvaluator = (function () {
                 var bestNode = _this.findBestMatchingASTNodeInExecutedNodes(), newEnv = bestNode.env, range = bestNode.range, wholeProgram = _this.editor.getValue(), parentNodeWrapper = ObjectUtils.parentNodeOf(bestNode, _this.evaluator.ast), parentNode = parentNodeWrapper.node;
                 _this.setEditorListener({
                     changeListener: function () {
-                        _this.evaluator.executedNodes.length = 0;
                         var editedAreaMarker = _this.editor.getMarkersByName('editedCode')[0].find(), editedText = _this.editor.getRange(editedAreaMarker.from, editedAreaMarker.to);
                         _this.evaluator.evaluate(editedText, newEnv)
                             .then(function (result) {
@@ -127,34 +127,31 @@ var EditorEvaluator = (function () {
             CompleteStructurally: function (grammar) {
                 _this.lastGrammar = grammar;
                 var start = _this.editor.getCurrentCursorIndex(), stop;
+                var completionsComponent = _this.editor.completionsComponent;
                 var onCompletionSelected = function (e) {
-                    _this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
+                    completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
                     _this.completionSelectedHandler(e, start, stop);
-                    // repeat forever
-                    _this.startMode('Idle');
+                    _this.stopLastMode();
                 };
-                _this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+                completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+                completionsComponent.setValues(StructuralCompletions.getHints(grammar, ""));
+                completionsComponent.show();
                 _this.setEditorListener({
                     changeListener: function () {
                         var now = _this.editor.getCurrentCursorIndex();
                         var filter = _this.editor.getValue().substring(start, stop = now);
-                        var completionsComponent = _this.editor.completionsComponent;
                         completionsComponent.setFilterText(filter);
-                        completionsComponent.setValues(StructuralCompletions.getHints(grammar, filter));
-                        completionsComponent.show();
                         _this.editor.updateCompletionsPosition();
                     },
                     cursorActivityListener: function () {
-                        // TODO: DRY
                         var now = _this.editor.getCurrentCursorIndex();
                         if (now < start || now > stop) {
                             onCompletionSelected();
-                            _this.editor.completionsComponent.hide();
-                            return;
+                            completionsComponent.hide();
                         }
                     },
                     keydownListener: function (editor, event) {
-                        _this.editor.completionsComponent.keyPressed(event);
+                        completionsComponent.keyPressed(event);
                     }
                 });
             }
@@ -176,7 +173,18 @@ var EditorEvaluator = (function () {
         if (!(modeName in this.modes)) {
             throw new Error(modeName + " mode doesn't exist.");
         }
-        this.modes[modeName](params);
+        var mode = this.modes[modeName];
+        mode(params || {});
+        this.modesStack.push({ mode: mode, params: params });
+    };
+    EditorEvaluator.prototype.stopLastMode = function (alternativeParams) {
+        var lastMode = this.modesStack.pop();
+        // run previous mode if present
+        if (this.modesStack.length) {
+            var _a = this.modesStack[this.modesStack.length - 1], mode = _a.mode, params = _a.params;
+            mode(alternativeParams || params);
+        }
+        return lastMode.mode;
     };
     EditorEvaluator.prototype.completionSelectedHandler = function (e, start, stop) {
         if (e && e.detail) {

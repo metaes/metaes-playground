@@ -34,7 +34,6 @@ module StructuralCompletions {
           });
         });
       }
-
     }
 
     iter(tokenName);

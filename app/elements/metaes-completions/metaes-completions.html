@@ -6,7 +6,7 @@
     <div class="dropdown-component">
       <div class="dropdownmodal">
         <table class="dropdown">
-          <template repeat="{{ value in values }}">
+          <template repeat="{{ value in renderValues(values, filterText) }}">
             <tr class="{{value.selected}}">
               <td class="type-value">{{value.type}}</td>
               <td>

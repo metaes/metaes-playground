@@ -1,5 +1,6 @@
 /// <reference path="./object-utils.ts" />
 /// <reference path="./evaluation-system2.ts" />
+/// <reference path="./editor-evaluator.ts" />
 /// <reference path="../elements/metaes-editor/metaes-editor.ts" />
 
 declare
@@ -60,7 +61,7 @@ function runApp() {
     [variables, callstack].forEach(fixCss);
 
     var
-      evaluator = new EvaluationSystem2.EditorEvaluator(editor),
+      evaluator = new EditorEvaluator(editor),
       logsCounter = 0,
       console = {
         log(...args) {

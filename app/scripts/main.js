@@ -1,5 +1,6 @@
 /// <reference path="./object-utils.ts" />
 /// <reference path="./evaluation-system2.ts" />
+/// <reference path="./editor-evaluator.ts" />
 /// <reference path="../elements/metaes-editor/metaes-editor.ts" />
 var didRun = false, examples = [
     { title: "1. Basic evaluation", file: '1.default.js' },
@@ -42,7 +43,7 @@ function runApp() {
         variables.shouldSort = false;
         var callstack = document.querySelector('#callstack');
         [variables, callstack].forEach(fixCss);
-        var evaluator = new EvaluationSystem2.EditorEvaluator(editor), logsCounter = 0, console = {
+        var evaluator = new EditorEvaluator(editor), logsCounter = 0, console = {
             log: function () {
                 var args = [];
                 for (var _i = 0; _i < arguments.length; _i++) {

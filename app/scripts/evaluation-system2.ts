@@ -102,6 +102,8 @@ module EvaluationSystem2 {
     }
 
     evaluate(source, env?:Env):Promise<SuccessValue | ErrorValue> {
+      this.executedNodes.length = 0;
+
       return new Promise((success:(val:SuccessValue) => void, error:(val:ErrorValue) => void) => {
         var
           config = {
@@ -118,7 +120,7 @@ module EvaluationSystem2 {
             error({ast: ast, errorType: errorType, error: errorValue});
           };
 
-        metaes.evaluate(source, this.evaluationConfig[1] || env || defaultEnv, config, evalSuccess, evalError);
+        metaes.evaluate(source, env || this.evaluationConfig[1] || defaultEnv, config, evalSuccess, evalError);
       });
     }
   }

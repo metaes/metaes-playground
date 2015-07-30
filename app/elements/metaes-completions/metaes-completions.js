@@ -47,9 +47,9 @@ var MetaesCompletions;
             this.values = [];
             this.setFilterText("");
         };
-        MetaesCompletionsElement.prototype.setValues = function (values) {
+        MetaesCompletionsElement.prototype.renderValues = function (values, filterText) {
             if (Array.isArray(values)) {
-                var tryToFilterThoseElements = tryToFilter.bind(null, this.filterText), maybeHighlightText = highlightSearch.bind(null, this.filterText);
+                var tryToFilterThoseElements = tryToFilter.bind(null, filterText), maybeHighlightText = highlightSearch.bind(null, filterText);
                 values = values
                     .filter(tryToFilterThoseElements)
                     .sort(function (a, b) {
@@ -59,7 +59,6 @@ var MetaesCompletions;
                     element.renderName = maybeHighlightText(element.name);
                     return element;
                 });
-                this.values = values;
                 if (this.values.length) {
                     this.selectElement(0);
                     // redraw
@@ -67,7 +66,11 @@ var MetaesCompletions;
                     this.style.left = left + 1 + 'px';
                     this.style.left = left + 'px';
                 }
+                return values;
             }
+        };
+        MetaesCompletionsElement.prototype.setValues = function (values) {
+            this.values = values;
         };
         MetaesCompletionsElement.prototype.setFilterText = function (value) {
             this.filterText = value || "";

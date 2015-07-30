@@ -49,6 +49,7 @@ var EvaluationSystem2;
         };
         Evaluator.prototype.evaluate = function (source, env) {
             var _this = this;
+            this.executedNodes.length = 0;
             return new Promise(function (success, error) {
                 var config = {
                     interceptor: _this.applyInterceptor.bind(_this)
@@ -61,7 +62,7 @@ var EvaluationSystem2;
                     }
                     error({ ast: ast, errorType: errorType, error: errorValue });
                 };
-                metaes.evaluate(source, _this.evaluationConfig[1] || env || defaultEnv, config, evalSuccess, evalError);
+                metaes.evaluate(source, env || _this.evaluationConfig[1] || defaultEnv, config, evalSuccess, evalError);
             });
         };
         return Evaluator;

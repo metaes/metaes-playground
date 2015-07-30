@@ -6,8 +6,7 @@ module MetaesCompletions {
     detail: any;
     constructor(type:string, detail:any);
   }
-  declare
-  var CustomEvent:{
+  declare var CustomEvent:{
     prototype: CustomEvent;
     new(type:string, detail:any): CustomEvent;
   };
@@ -69,11 +68,11 @@ module MetaesCompletions {
       this.setFilterText("");
     }
 
-    setValues(values:CompletionRow[]) {
+    renderValues(values, filterText) {
       if (Array.isArray(values)) {
         var
-          tryToFilterThoseElements = tryToFilter.bind(null, this.filterText),
-          maybeHighlightText = highlightSearch.bind(null, this.filterText);
+          tryToFilterThoseElements = tryToFilter.bind(null, filterText),
+          maybeHighlightText = highlightSearch.bind(null, filterText);
 
         values = values
           .filter(tryToFilterThoseElements)
@@ -85,8 +84,6 @@ module MetaesCompletions {
           element.renderName = maybeHighlightText(element.name);
           return element;
         });
-        this.values = values;
-
         if (this.values.length) {
           this.selectElement(0);
           // redraw
@@ -94,7 +91,13 @@ module MetaesCompletions {
           this.style.left = left + 1 + 'px';
           this.style.left = left + 'px';
         }
+
+        return values;
       }
+    }
+
+    setValues(values:CompletionRow[]) {
+      this.values = values;
     }
 
     setFilterText(value) {
@@ -164,7 +167,6 @@ module MetaesCompletions {
             );
             this.dispatchEvent(customEvent);
           }
-
           break;
       }
     }
