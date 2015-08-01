@@ -25,7 +25,7 @@ class EditorEvaluator {
             case 32: // ctrl + space
               if (event.ctrlKey) {
                 event.preventDefault();
-                this.startMode('EvaluateExpression', this.lastGrammar);
+                this.startMode('Complete', {completions: this.getCompletionsByCursor()});
               }
               return;
           }
@@ -118,34 +118,40 @@ class EditorEvaluator {
       });
     },
 
-    Complete: ({extractor, diff = 0}) => {
+    Complete: ({completions, diff = 0}) => {
       var start = this.editor.getCurrentCursorIndex() + diff, stop;
+      var completionsComponent = this.editor.completionsComponent;
 
       var onCompletionSelected = (e?) => {
-        this.editor.completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
+        completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
         this.completionSelectedHandler(e, start, stop);
         this.startMode('EvaluateEditor');
         this.evaluate();
       };
-      this.editor.completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+
+      completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
+      completionsComponent.setValues(completions);
+      completionsComponent.setFilterText("");
+      completionsComponent.show();
+      this.editor.updateCompletionsPosition();
 
       this.setEditorListener({
         changeListener: () => {
           var now = this.editor.getCurrentCursorIndex();
           var filter = this.editor.getValue().substring(start, stop = now);
-          this.editor.completionsComponent.filterText = filter;
-          this.editor.completionsComponent.setValues(extractor());
+          completionsComponent.filterText = filter;
+
         },
         cursorActivityListener: () => {
           var now = this.editor.getCurrentCursorIndex();
           if (now < start || now > stop) {
             onCompletionSelected();
-            this.editor.completionsComponent.hide();
+            completionsComponent.hide();
             return;
           }
         },
         keydownListener: (editor, event:KeyboardEvent) => {
-          this.editor.completionsComponent.keyPressed(event);
+          completionsComponent.keyPressed(event);
         }
       });
     },
@@ -198,6 +204,14 @@ class EditorEvaluator {
     this.editor.completionsComponent.setValues(completions);
   }
 
+  getCompletionsByCursor() {
+    var
+      node = this.findBestMatchingASTNodeInASTTree(this.evaluator.ast, this.editor.getCurrentCursorIndex()),
+      env = ObjectUtils.findHighestEnv(node || this.evaluator.ast);
+
+    return ObjectUtils.extractKeysAndValuesAsCompletionsFromEnv(env);
+  }
+
   setAdditionalMetaESConfigAndInterceptors(config:EvaluationSystem2.EvaluationCallSignature,
                                            interceptors:EvaluationSystem2.Interceptor[]) {
     this.evaluator.setAdditionalMetaESConfigAndInterceptors(config, interceptors);
@@ -213,12 +227,18 @@ class EditorEvaluator {
     }
     var mode = this.modes[modeName];
     mode(params || {});
-    this.editor.modeName = modeName;
+
     this.modesStack.push({mode, params});
+    if (!this.editor.modesNames) {
+      this.editor.modesNames = [];
+    }
+    this.editor.modesNames.push(modeName);
   }
 
   stopLastMode(alternativeParams?):Mode {
     var lastMode = this.modesStack.pop();
+
+    this.editor.modesNames.pop();
 
     // run previous mode if present
     if (this.modesStack.length) {

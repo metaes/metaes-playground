@@ -7,7 +7,7 @@ function runApp() {
     ObjectUtils.httpGet('./data/partial-evaluation/example1.js')
         .then(function (file) {
         editor.setValue(file);
-        evaluator.startMode('Complete');
+        evaluator.startMode('Idle');
     });
 }
 (function (document) {

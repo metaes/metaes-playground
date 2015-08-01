@@ -13,7 +13,7 @@ module Editor {
     tooltip:HTMLElement;
 
     // evaluator mode name
-    modeName:string;
+    modesNames:string[];
 
     heightChanged() {
       var value = this.height || 500;
@@ -24,13 +24,10 @@ module Editor {
 
     ready() {
       this.markersByName = {};
-
       this.codeMirror = this.$.editor.mirror;
       this.codeMirror.setOption('mode', 'javascript');
       this.codeMirror.focus();
-
       this.tooltip = this.$.tooltip;
-
       this.heightChanged();
 
       this.completionsComponent = this.$.completionsComponent;
@@ -150,8 +147,8 @@ module Editor {
     updateTooltip(bestNode) {
       var value;
       value = bestNode.lastValue;
-      this.tooltip.type = bestNode.type;
-      this.tooltip.value = value;
+      (<any>this.tooltip).type = bestNode.type;
+      (<any>this.tooltip).value = value;
     }
   }
 }
