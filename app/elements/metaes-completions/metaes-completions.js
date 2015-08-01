@@ -59,13 +59,8 @@ var MetaesCompletions;
                     element.renderName = maybeHighlightText(element.name);
                     return element;
                 });
-                if (this.values.length) {
-                    this.selectElement(0);
-                    // redraw
-                    var left = parseInt(this.style.left, 10);
-                    this.style.left = left + 1 + 'px';
-                    this.style.left = left + 'px';
-                }
+                this.renderedValues = values;
+                this.selectElement(0);
                 return values;
             }
         };
@@ -80,13 +75,13 @@ var MetaesCompletions;
                 delete this.selectedElement.selected;
             }
             if (index < 0) {
-                index = this.values.length - 1;
+                index = this.renderedValues.length - 1;
             }
-            if (index >= this.values.length) {
+            if (index >= this.renderedValues.length) {
                 index = 0;
             }
             this.selectedElementIndex = index;
-            this.selectedElement = this.values[index];
+            this.selectedElement = this.renderedValues[index];
             this.selectedElement.selected = 'selected';
         };
         MetaesCompletionsElement.prototype.hide = function () {
