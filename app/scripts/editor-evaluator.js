@@ -20,14 +20,17 @@ var EditorEvaluator = (function () {
                 var bestNode = _this.findBestMatchingASTNodeInExecutedNodes(), newEnv = bestNode.env, range = bestNode.range, wholeProgram = _this.editor.getValue(), parentNodeWrapper = ObjectUtils.parentNodeOf(bestNode, _this.evaluator.ast), parentNode = parentNodeWrapper.node;
                 _this.setEditorListener({
                     changeListener: function () {
-                        var editedAreaMarker = _this.editor.getMarkersByName('editedCode')[0].find(), editedText = _this.editor.getRange(editedAreaMarker.from, editedAreaMarker.to);
+                        var _a = _this.editor.getMarkersByName('disabledCode'), preMarker = _a[0], postMarker = _a[1], editedText = _this.editor.getRange(preMarker.find().to, postMarker.find().from);
                         _this.evaluator.evaluate(editedText, newEnv)
                             .then(function (result) {
                             if (parentNode.type === 'FunctionDeclaration') {
                                 parentNode.lastValue.metaFunction.e.body = result.ast;
                             }
+                            _this.editor.log();
                         })
-                            .catch(function (result) { return console.log('error', result.error, result.errorType); });
+                            .catch(function (result) {
+                            _this.editor.log(result.error || result.errorType);
+                        });
                     },
                     cursorActivityListener: function () {
                         _this.highlightNodeUnderTheCursor();
@@ -37,7 +40,10 @@ var EditorEvaluator = (function () {
                             event.preventDefault();
                             _this.editor.clearMarkers('disabledCode');
                             _this.editor.clearMarkers('editedCode');
-                            _this.startMode('Idle');
+                            _this.stopLastMode();
+                        }
+                        else {
+                            _this.handleKeysForCompletion(event);
                         }
                     }
                 });
@@ -60,15 +66,6 @@ var EditorEvaluator = (function () {
                         _this.highlightNodeUnderTheCursor();
                     },
                     keydownListener: function (editor, event) {
-                        var init = function (extractor, offset) {
-                            if (offset === void 0) { offset = 0; }
-                            var completionsComponent = _this.editor.completionsComponent;
-                            _this.startMode("Complete", { extractor: extractor, offset: offset });
-                            _this.editor.updateCompletionsPosition();
-                            completionsComponent.setFilterText(null);
-                            completionsComponent.setValues(extractor());
-                            completionsComponent.show();
-                        };
                         _this.handleKeysForCompletion(event);
                     }
                 });
@@ -81,7 +78,7 @@ var EditorEvaluator = (function () {
                     completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
                     _this.completionSelectedHandler(e, start, stop);
                     _this.stopLastMode();
-                    _this.evaluate();
+                    _this.forceEvaluate();
                 };
                 completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
                 completionsComponent.setValues(completions);
@@ -183,7 +180,7 @@ var EditorEvaluator = (function () {
     EditorEvaluator.prototype.setAdditionalMetaESConfigAndInterceptors = function (config, interceptors) {
         this.evaluator.setAdditionalMetaESConfigAndInterceptors(config, interceptors);
     };
-    EditorEvaluator.prototype.evaluate = function () {
+    EditorEvaluator.prototype.forceEvaluate = function () {
         this.editorEvents.executeChangeListener();
     };
     EditorEvaluator.prototype.startMode = function (modeName, params) {

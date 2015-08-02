@@ -38,16 +38,19 @@ class EditorEvaluator {
       this.setEditorListener({
         changeListener: () => {
           var
-            editedAreaMarker:any = this.editor.getMarkersByName('editedCode')[0].find(),
-            editedText = this.editor.getRange(editedAreaMarker.from, editedAreaMarker.to);
+            [preMarker, postMarker]= <any>this.editor.getMarkersByName('disabledCode'),
+            editedText = this.editor.getRange(preMarker.find().to, postMarker.find().from);
 
           this.evaluator.evaluate(editedText, newEnv)
             .then((result:EvaluationSystem2.SuccessValue) => {
               if (parentNode.type === 'FunctionDeclaration') {
                 parentNode.lastValue.metaFunction.e.body = result.ast;
               }
+              this.editor.log();
             })
-            .catch((result:EvaluationSystem2.ErrorValue) => console.log('error', result.error, result.errorType));
+            .catch((result:EvaluationSystem2.ErrorValue) => {
+              this.editor.log(result.error || result.errorType);
+            });
         },
         cursorActivityListener: () => {
           this.highlightNodeUnderTheCursor();
@@ -55,10 +58,11 @@ class EditorEvaluator {
         keydownListener: (editor, event:KeyboardEvent) => {
           if (event.keyCode === 27) {
             event.preventDefault();
-
             this.editor.clearMarkers('disabledCode');
             this.editor.clearMarkers('editedCode');
-            this.startMode('Idle');
+            this.stopLastMode();
+          } else {
+            this.handleKeysForCompletion(event);
           }
         }
       });
@@ -82,14 +86,6 @@ class EditorEvaluator {
           this.highlightNodeUnderTheCursor();
         },
         keydownListener: (editor, event:KeyboardEvent) => {
-          let init = (extractor, offset = 0) => {
-            var completionsComponent = this.editor.completionsComponent;
-            this.startMode("Complete", {extractor, offset});
-            this.editor.updateCompletionsPosition();
-            completionsComponent.setFilterText(null);
-            completionsComponent.setValues(extractor());
-            completionsComponent.show();
-          };
           this.handleKeysForCompletion(event);
         }
       });
@@ -103,7 +99,7 @@ class EditorEvaluator {
         completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
         this.completionSelectedHandler(e, start, stop);
         this.stopLastMode();
-        this.evaluate();
+        this.forceEvaluate();
       };
 
       completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
@@ -224,7 +220,7 @@ class EditorEvaluator {
     this.evaluator.setAdditionalMetaESConfigAndInterceptors(config, interceptors);
   }
 
-  evaluate() {
+  forceEvaluate() {
     this.editorEvents.executeChangeListener();
   }
 

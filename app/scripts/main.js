@@ -81,7 +81,7 @@ function runApp() {
         };
         function onBootstrapChange() {
             execute(null, bootstrap.getValue());
-            evaluator.evaluate();
+            evaluator.forceEvaluate();
         }
         function execute(sourceInEditor, bootstrapSource) {
             var args, metaes = {
