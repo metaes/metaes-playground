@@ -21,14 +21,7 @@ class EditorEvaluator {
           this.highlightNodeUnderTheCursor();
         },
         keydownListener: (editor, event:KeyboardEvent) => {
-          switch (event.keyCode) {
-            case 32: // ctrl + space
-              if (event.ctrlKey) {
-                event.preventDefault();
-                this.startMode('Complete', {completions: this.getCompletionsByCursor()});
-              }
-              return;
-          }
+          this.handleSpecialKeys(event);
         }
       })
     },
@@ -97,23 +90,7 @@ class EditorEvaluator {
             completionsComponent.setValues(extractor());
             completionsComponent.show();
           };
-          switch (event.keyCode) {
-            case 32: // ctrl + space
-              if (event.ctrlKey) {
-                event.preventDefault();
-                var
-                  node = this.findBestMatchingASTNodeInASTTree(this.evaluator.ast, this.editor.getCurrentCursorIndex()),
-                  env = ObjectUtils.findHighestEnv(node || this.evaluator.ast);
-                init(() => ObjectUtils.extractKeysAndValuesAsCompletionsFromEnv(env))
-              }
-              return;
-            case 190: // .
-              var node = this.findBestMatchingASTNodeInASTTree(this.evaluator.ast, this.editor.getCurrentCursorIndex());
-              if (this.lastBestNode) {
-                init(()=>ObjectUtils.extractCompletions(node.lastValue || this.lastBestNode.lastValue), 1);
-              }
-              return;
-          }
+          this.handleSpecialKeys(event);
         }
       });
     },
@@ -125,7 +102,7 @@ class EditorEvaluator {
       var onCompletionSelected = (e?) => {
         completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
         this.completionSelectedHandler(e, start, stop);
-        this.startMode('EvaluateEditor');
+        this.stopLastMode();
         this.evaluate();
       };
 
@@ -202,6 +179,26 @@ class EditorEvaluator {
 
     var completions = ObjectUtils.extractCompletions(window);
     this.editor.completionsComponent.setValues(completions);
+  }
+
+  handleSpecialKeys(event) {
+    switch (event.keyCode) {
+      case 32: // ctrl + space
+        if (event.ctrlKey) {
+          event.preventDefault();
+          this.startMode('Complete', {completions: this.getCompletionsByCursor()});
+        }
+        return;
+      case 190: // .
+        var node = this.findBestMatchingASTNodeInASTTree(this.evaluator.ast, this.editor.getCurrentCursorIndex());
+        if (node) {
+          this.startMode('Complete', {
+            completions: ObjectUtils.extractCompletions(node.lastValue),
+            diff: 1
+          });
+        }
+        return;
+    }
   }
 
   getCompletionsByCursor() {

@@ -12,14 +12,7 @@ var EditorEvaluator = (function () {
                         _this.highlightNodeUnderTheCursor();
                     },
                     keydownListener: function (editor, event) {
-                        switch (event.keyCode) {
-                            case 32:
-                                if (event.ctrlKey) {
-                                    event.preventDefault();
-                                    _this.startMode('Complete', { completions: _this.getCompletionsByCursor() });
-                                }
-                                return;
-                        }
+                        _this.handleSpecialKeys(event);
                     }
                 });
             },
@@ -76,21 +69,7 @@ var EditorEvaluator = (function () {
                             completionsComponent.setValues(extractor());
                             completionsComponent.show();
                         };
-                        switch (event.keyCode) {
-                            case 32:
-                                if (event.ctrlKey) {
-                                    event.preventDefault();
-                                    var node = _this.findBestMatchingASTNodeInASTTree(_this.evaluator.ast, _this.editor.getCurrentCursorIndex()), env = ObjectUtils.findHighestEnv(node || _this.evaluator.ast);
-                                    init(function () { return ObjectUtils.extractKeysAndValuesAsCompletionsFromEnv(env); });
-                                }
-                                return;
-                            case 190:
-                                var node = _this.findBestMatchingASTNodeInASTTree(_this.evaluator.ast, _this.editor.getCurrentCursorIndex());
-                                if (_this.lastBestNode) {
-                                    init(function () { return ObjectUtils.extractCompletions(node.lastValue || _this.lastBestNode.lastValue); }, 1);
-                                }
-                                return;
-                        }
+                        _this.handleSpecialKeys(event);
                     }
                 });
             },
@@ -101,7 +80,7 @@ var EditorEvaluator = (function () {
                 var onCompletionSelected = function (e) {
                     completionsComponent.removeEventListener('selectedCompletion', onCompletionSelected);
                     _this.completionSelectedHandler(e, start, stop);
-                    _this.startMode('EvaluateEditor');
+                    _this.stopLastMode();
                     _this.evaluate();
                 };
                 completionsComponent.addEventListener('selectedCompletion', onCompletionSelected);
@@ -167,6 +146,25 @@ var EditorEvaluator = (function () {
         var completions = ObjectUtils.extractCompletions(window);
         this.editor.completionsComponent.setValues(completions);
     }
+    EditorEvaluator.prototype.handleSpecialKeys = function (event) {
+        switch (event.keyCode) {
+            case 32:
+                if (event.ctrlKey) {
+                    event.preventDefault();
+                    this.startMode('Complete', { completions: this.getCompletionsByCursor() });
+                }
+                return;
+            case 190:
+                var node = this.findBestMatchingASTNodeInASTTree(this.evaluator.ast, this.editor.getCurrentCursorIndex());
+                if (node) {
+                    this.startMode('Complete', {
+                        completions: ObjectUtils.extractCompletions(node.lastValue),
+                        diff: 1
+                    });
+                }
+                return;
+        }
+    };
     EditorEvaluator.prototype.getCompletionsByCursor = function () {
         var node = this.findBestMatchingASTNodeInASTTree(this.evaluator.ast, this.editor.getCurrentCursorIndex()), env = ObjectUtils.findHighestEnv(node || this.evaluator.ast);
         return ObjectUtils.extractKeysAndValuesAsCompletionsFromEnv(env);

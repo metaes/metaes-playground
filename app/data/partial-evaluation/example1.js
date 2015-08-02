@@ -10,5 +10,9 @@ function httpGet(filePath) {
 }
 
 httpGet('index.html').then(function (html) {
-  console.log(html.split("\n")[0]);
+  var result = html.split("\n")[0];
+  console.log(result);
 });
+
+
+httpGet

@@ -87,7 +87,9 @@ module MetaesCompletions {
         });
 
         this.renderedValues = values;
-        this.selectElement(0);
+        if (this.renderedValues.length) {
+          this.selectElement(0);
+        }
         return values;
       }
     }
