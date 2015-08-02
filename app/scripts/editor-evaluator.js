@@ -12,7 +12,7 @@ var EditorEvaluator = (function () {
                         _this.highlightNodeUnderTheCursor();
                     },
                     keydownListener: function (editor, event) {
-                        _this.handleSpecialKeys(event);
+                        _this.handleKeysForCompletion(event);
                     }
                 });
             },
@@ -69,7 +69,7 @@ var EditorEvaluator = (function () {
                             completionsComponent.setValues(extractor());
                             completionsComponent.show();
                         };
-                        _this.handleSpecialKeys(event);
+                        _this.handleKeysForCompletion(event);
                     }
                 });
             },
@@ -103,7 +103,18 @@ var EditorEvaluator = (function () {
                         }
                     },
                     keydownListener: function (editor, event) {
-                        completionsComponent.keyPressed(event);
+                        switch (event.keyCode) {
+                            case 32:
+                                if (event.ctrlKey) {
+                                    event.preventDefault();
+                                    completionsComponent.hide();
+                                    _this.startMode('EvaluateExpression');
+                                }
+                                return;
+                            default:
+                                completionsComponent.keyPressed(event);
+                                break;
+                        }
                     }
                 });
             },
@@ -146,7 +157,7 @@ var EditorEvaluator = (function () {
         var completions = ObjectUtils.extractCompletions(window);
         this.editor.completionsComponent.setValues(completions);
     }
-    EditorEvaluator.prototype.handleSpecialKeys = function (event) {
+    EditorEvaluator.prototype.handleKeysForCompletion = function (event) {
         switch (event.keyCode) {
             case 32:
                 if (event.ctrlKey) {

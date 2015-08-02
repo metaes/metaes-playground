@@ -21,7 +21,7 @@ class EditorEvaluator {
           this.highlightNodeUnderTheCursor();
         },
         keydownListener: (editor, event:KeyboardEvent) => {
-          this.handleSpecialKeys(event);
+          this.handleKeysForCompletion(event);
         }
       })
     },
@@ -90,7 +90,7 @@ class EditorEvaluator {
             completionsComponent.setValues(extractor());
             completionsComponent.show();
           };
-          this.handleSpecialKeys(event);
+          this.handleKeysForCompletion(event);
         }
       });
     },
@@ -117,7 +117,6 @@ class EditorEvaluator {
           var now = this.editor.getCurrentCursorIndex();
           var filter = this.editor.getValue().substring(start, stop = now);
           completionsComponent.filterText = filter;
-
         },
         cursorActivityListener: () => {
           var now = this.editor.getCurrentCursorIndex();
@@ -128,7 +127,18 @@ class EditorEvaluator {
           }
         },
         keydownListener: (editor, event:KeyboardEvent) => {
-          completionsComponent.keyPressed(event);
+          switch (event.keyCode) {
+            case 32: // ctrl + space
+              if (event.ctrlKey) {
+                event.preventDefault();
+                completionsComponent.hide();
+                this.startMode('EvaluateExpression');
+              }
+              return;
+            default:
+              completionsComponent.keyPressed(event);
+              break;
+          }
         }
       });
     },
@@ -181,7 +191,7 @@ class EditorEvaluator {
     this.editor.completionsComponent.setValues(completions);
   }
 
-  handleSpecialKeys(event) {
+  handleKeysForCompletion(event) {
     switch (event.keyCode) {
       case 32: // ctrl + space
         if (event.ctrlKey) {
